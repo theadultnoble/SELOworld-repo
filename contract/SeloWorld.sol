@@ -66,6 +66,17 @@ contract SeloWorld {
       );
       landsLength++;
     }
+
+  function deleteLand(uint _index) public payable {
+    lands[_index] = lands[landsLength - 1];
+    lands.pop();
+  }
+  function orderedLand(uint _index) public {
+    for(uint i = _index ; i < landsLength -1; i++){
+      lands[i] = lands[i+1];
+    }
+    lands.pop();
+  }
   
   function readLand(uint _index) public view returns (
     address payable,
