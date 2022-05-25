@@ -2,15 +2,19 @@
 
 ## About Dapp?
 
-Selo world is a real estate marketplace for trading buildings in the metaverse 
+Selo world is a real estate marketplace for trading buildings and landmarks in the metaverse 
 
 Its features include:
 
-- Buy buildings in different neighbourhoods as NFTs using the Celo dollar cUSD.
-- List your Celo wallet address to be allowed listing rights.
-- Delete buildings you have put up for sale.
-- View other buildings put up for sale buy others.
-- Pay for buildings with instalments over an agreed time.
+- Add your Celo wallet address and be allowed listing rights.
+- Auction your own real estate NFT
+- View other real estate put up for auction.
+- Place bids for real estate as NFTs using the Celo dollar cUSD.
+
+<aside>
+💡 NB : Auctions last 24hrs from listing in which the highest bid price wins
+
+</aside>
 
 ## Requirements
 
@@ -22,6 +26,13 @@ Its features include:
 - Switch to the alfajores testnet in the CeloExtensionWallet.
 
 ## Test SeloWorld
+
+- Connect your [CeloExtensionWallet](https://chrome.google.com/webstore/detail/celoextensionwallet/kkilomkmpmkbdnfelcpgckmpcaemjcdh?hl=en) using the connect wallet button
+- Use the List button to add your account address as a salesman(allows you to put up real estate for auction)
+- Add real estate with your opening bid price for interested buyers
+- Create a second [CeloExtensionWallet](https://chrome.google.com/webstore/detail/celoextensionwallet/kkilomkmpmkbdnfelcpgckmpcaemjcdh?hl=en) account to see the funds being transferred
+- Place bids on other real estate owned by salesmen
+- Switch to other account to see your balance increase
 
 ---
 
@@ -60,3 +71,5 @@ Your project should be running here [http://localhost:3000/](http://localhost:30
 `npm run build`
 
 Builds the app for production to the `docs` folder.
+
+# Live Demo
