@@ -57,13 +57,25 @@
       <div class="container">
         <div>
           <a href="#" class="navbar-brand">SELOWorld</a>
-          <img
-            class="img-fluid w-30"
-            src="./images/communityIcon_86ltnuoxy9541.png"
-          />
+          <!-- <span
+            ><img
+              class="img-fluid w-30"
+              src="./images/celo_icon.png.crdownload"
+          /></span> -->
         </div>
-        <button type="button" class="btn btn-outline-secondary">Apply</button>
-        <button type="button" class="btn btn-outline-secondary">
+        <button
+          type="button"
+          class="btn btn-outline-secondary"
+          data-bs-toggle="modal"
+          data-bs-target="#applyModal"
+        >
+          Apply
+        </button>
+        <button
+          type="button"
+          id="connectwallet"
+          class="btn btn-outline-secondary"
+        >
           Connect Wallet
         </button>
         <span
@@ -80,7 +92,7 @@
       style="height: 100%"
       role="alert"
     >
-      <span id="notification">⌛ Loading...</span>
+      <span id="notification">Connect DApp to Celo Wallet.</span>
     </div>
     <!--Section-->
     <section class="bg-dark text-light p-5 text-center">
@@ -102,7 +114,7 @@
         <main id="marketplace" class="row"></main>
       </div>
 
-      <!--Modal-->
+      <!--AddModal-->
       <div
         class="modal fade"
         id="addModal"
@@ -113,7 +125,9 @@
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 class="modal-title" id="newProductModalLabel">New Product</h5>
+              <h5 class="modal-title text-dark" id="newProductModalLabel">
+                New Product
+              </h5>
               <button
                 type="button"
                 class="btn-close"
@@ -143,17 +157,9 @@
                   <div class="col">
                     <input
                       type="text"
-                      id="newProductDescription"
+                      id="newStreetName"
                       class="form-control mb-2"
-                      placeholder="Enter product description"
-                    />
-                  </div>
-                  <div class="col">
-                    <input
-                      type="text"
-                      id="newLocation"
-                      class="form-control mb-2"
-                      placeholder="Enter location"
+                      placeholder="Enter Streetname"
                     />
                   </div>
                   <div class="col">
@@ -187,7 +193,72 @@
           </div>
         </div>
       </div>
-      <!--/Modal-->
+      <!--/AddModal-->
+
+      <!--ApplyModal-->
+      <div
+        class="modal fade"
+        id="applyModal"
+        tabindex="-1"
+        aria-labelledby="newProductModalLabel"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title text-dark" id="newProductModalLabel">
+                Apply for addRight
+              </h5>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div class="modal-body">
+              <form>
+                <div class="form-row">
+                  <div class="col">
+                    <input
+                      type="text"
+                      id="newName"
+                      class="form-control mb-2"
+                      placeholder="Enter name"
+                    />
+                  </div>
+                  <div class="col">
+                    <input
+                      type="text"
+                      id="newAddress"
+                      class="form-control mb-2"
+                      placeholder="Enter Wallet Address"
+                    />
+                  </div>
+                </div>
+              </form>
+            </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-light border"
+                data-bs-dismiss="modal"
+              >
+                Close
+              </button>
+              <button
+                type="button"
+                class="btn btn-success"
+                data-bs-dismiss="modal"
+                id="newProductBtn"
+              >
+                Add product
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!--/ApplyModal-->
     </section>
 
     <!-- Option 1: Bootstrap Bundle with Popper -->
