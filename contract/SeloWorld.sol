@@ -13,8 +13,73 @@ interface IERC20Token {
   event Approval(address indexed owner, address indexed spender, uint256 value);
 }
 
-contract SeloWorld {
+/**
+ * @title Ownable
+ * @dev The Ownable contract has an owner address, and provides basic authorization control
+ * functions, this simplifies the implementation of "user permissions".
+ */
+contract Ownable {
+  address internal _owner;
+
+  event OwnershipTransferred(
+    address indexed previousOwner,
+    address indexed newOwner
+  );
+
+  /**
+   *  The Ownable constructor sets the original `owner` of the contract to the sender
+   * account.
+   */
+  constructor() {
+    _owner = msg.sender;
+    emit OwnershipTransferred(address(0), _owner);
+  }
+
+  /**
+   * @return the address of the owner.
+   */
+  function owner() public view returns(address) {
+    return _owner;
+  }
+
+  /**
+   *  Throws if called by any account other than the owner.
+   */
+  modifier onlyOwner() {
+    require(isOwner());
+    _;
+  }
+
+  /**
+   * @return true if `msg.sender` is the owner of the contract.
+   */
+  function isOwner() public view returns(bool) {
+    return msg.sender == _owner;
+  }
+
+
+  /**
+   * Allows the current owner to transfer control of the contract to a newOwner.
+   * @param newOwner The address to transfer ownership to.
+   */
+  function transferOwnership(address newOwner) public onlyOwner {
+    _transferOwnership(newOwner);
+  }
+
+  /**
+   * Transfers control of the contract to a newOwner.
+   * @param newOwner The address to transfer ownership to.
+   */
+  function _transferOwnership(address newOwner) internal {
+    require(newOwner != address(0));
+    emit OwnershipTransferred(_owner, newOwner);
+    _owner = newOwner;
+  }
+}
+
+contract Seloworld is Ownable {
     uint internal landsLength = 0;
+    uint internal salesMenLength = 0;
     address internal cUsdTokenAddress = 0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1;
 
     struct Land {
@@ -26,26 +91,28 @@ contract SeloWorld {
         
     }
     mapping (uint => Land) internal lands;
+    
+    uint256 private seed;
 
-    struct salesMan {
-      address owner;
-      string name;
-      uint weight;
+
+    mapping (address => bool) public salesMen;
+
+    constructor(){
+      seed = uint (blockhash(block.number - 1)) % 100;
+      salesMen[_owner] = true;
+
     }
-    mapping (address => salesMan) internal salesMen;
-
-
-    //0x4845dBEF5e48176fc92C0fc2F341E8f85F2Ca5b4
-
+    
+    
     //give a user the right to add a new Land
     //can be called by anyone sending the transaction
     function giveRightToWriteLand (
-      address _owner
+      address _salesman
     ) external {
-      require(salesMen[_owner].weight == 0);
-        salesMen[_owner].weight = 1;
-
-
+      if(seed <= 50) {
+        salesMen[_salesman] = true;
+        salesMenLength++;
+        }
     }
 
     function writeLand(
@@ -54,8 +121,8 @@ contract SeloWorld {
       string memory _streetName,
       uint _price
     ) public {
-        salesMan storage sender = salesMen[msg.sender];
-        require(sender.weight != 0, "Has no right");
+      bool sender = salesMen[msg.sender];
+      require(sender != false, "has no right");
     
       lands[landsLength] = Land(
         payable(msg.sender),
@@ -66,19 +133,8 @@ contract SeloWorld {
       );
       landsLength++;
     }
-
-  function deleteLand(uint _index) public payable {
-    lands[_index] = lands[landsLength - 1];
-    lands.pop();
-  }
-  function orderedLand(uint _index) public {
-    for(uint i = _index ; i < landsLength -1; i++){
-      lands[i] = lands[i+1];
-    }
-    lands.pop();
-  }
-  
-  function readLand(uint _index) public view returns (
+    
+    function readLand(uint _index) public view returns (
     address payable,
     string memory,
     string memory,
@@ -107,6 +163,10 @@ contract SeloWorld {
 
   function getLandsLength() public view returns (uint) {
     return (landsLength);
+  }
+
+  function getSalesMenLength() public view returns (uint){
+    return (salesMenLength);
   }
 
 
