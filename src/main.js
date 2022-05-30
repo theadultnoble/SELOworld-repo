@@ -6,7 +6,7 @@ import seloWorldAbi from "../contract/seloWorld.abi.json";
 
 const ERC20_DECIMALS = 18;
 //crypto zombies changing contract logic
-const MPContractAddress = "0xB2de9Ea878e01C54B01eAbdD7b3F2ff4c64628a5";
+const MPContractAddress = "0x2418cB6A884041E347a50297A753AdDcEd6E5662";
 const cUSDContractAddress = "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1";
 
 let kit;
