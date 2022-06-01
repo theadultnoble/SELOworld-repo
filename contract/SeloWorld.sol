@@ -87,7 +87,7 @@ contract Seloworld {
     /*
       MODIFIERS
     */
-    /*
+    
     modifier priceGreaterThanZero(uint256 _minPrice) {
       require(_minPrice > 0, "Price cannot be 0");
       _;
@@ -119,7 +119,7 @@ contract Seloworld {
       require(!_isMinimumBidMade(_landaddress, _index), "Min bid made");
       _;
     }
-    */
+    
 
     /*
       ENDMODIFIERS
@@ -272,13 +272,11 @@ contract Seloworld {
         highestBid), "failed"
       );
       } else{
-        (bool sent, bytes memory data) = payable(msg.sender).call{value: highestBid, gas: 20000}("");
+        (bool sent, ) = payable(msg.sender).call{value: highestBid, gas: 20000}("");
         require(sent, "Could not withdraw");
         }
     
     emit BidWithdrawn(
-      _landaddress,
-      _index,
       msg.sender
     );
 
@@ -298,7 +296,7 @@ contract Seloworld {
           highestBid), "failed"
           );
         } else {
-          (bool sent, bytes memory data) = payable(msg.sender).call{value: highestBid, gas: 20000}("");
+          (bool sent,) = payable(msg.sender).call{value: highestBid, gas: 20000}("");
           require(sent, "Could not withdraw");
         }
 
@@ -306,8 +304,7 @@ contract Seloworld {
 
         ended = true;
         emit AuctionEnd(
-          highestBidder,
-          highestBid
+          highestBidder
         );
 
   }
