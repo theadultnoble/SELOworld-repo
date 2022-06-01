@@ -23,7 +23,6 @@ contract Seloworld {
 
     //Default Values for LandAuction
     uint32 public bidIncreasePercentage;
-    uint256 public auctionEnd;
     uint32 public feePercentage;
     address feeRecepient = _Owner;
 
@@ -35,6 +34,8 @@ contract Seloworld {
         uint128 minPrice; 
         uint128 highestBid;
         address highestBidder;
+        uint256 auctionEnd;
+        
         
     }
     mapping(address => mapping(uint256 => Land)) public lands;
@@ -86,10 +87,12 @@ contract Seloworld {
     /*
       MODIFIERS
     */
+    /*
     modifier priceGreaterThanZero(uint256 _minPrice) {
       require(_minPrice > 0, "Price cannot be 0");
       _;
     }
+  
     modifier notNftSeller(address _landaddress, uint256 _index) {
       require(msg.sender != lands[_landaddress][_index].owner, "Owner cannot bid on own NFT");
       _;
@@ -116,6 +119,7 @@ contract Seloworld {
       require(!_isMinimumBidMade(_landaddress, _index), "Min bid made");
       _;
     }
+    */
 
     /*
       ENDMODIFIERS
@@ -170,7 +174,7 @@ contract Seloworld {
       AUCTION FUNCTIONS
     */
 
-    //give a user the right to add a new Land
+    //give a user the right to add new Land
     //can be called by anyone sending the transaction
     function giveRightToWriteLand (
       address _salesman
@@ -189,8 +193,7 @@ contract Seloworld {
       string memory _image,
       string memory _streetName,
       uint128 _minPrice
-    ) public  
-    priceGreaterThanZero(_minPrice) {
+    ) public  {
       bool sender = salesMen[msg.sender];
       require(sender != false, "has no right");
       lands[_owner][landsLength].owner = _owner;
@@ -202,7 +205,8 @@ contract Seloworld {
 
       landsLength++;
       started = true;
-      auctionEnd = block.timestamp + 1 days;
+      lands[_owner][landsLength].auctionEnd = block.timestamp + 1 days;
+
 
       emit AuctionCreated(
        _owner,
@@ -231,8 +235,8 @@ contract Seloworld {
     );
   }
 
-  function makeBid(address _landaddress, uint _index, uint128 _amount) public payable
-  bidMeetsRequirements(
+  function makeBid(address _landaddress, uint _index, uint128 _amount) external payable
+ /* bidMeetsRequirements(
     _landaddress,
     _index,
     _amount
@@ -240,9 +244,9 @@ contract Seloworld {
   minBidNotMade(
     _landaddress,
     _index
-  ){
-    require(started, "Auction has not started");
-    require(block.timestamp < auctionEnd, "Auction has ended");
+  )*/ {
+    //require(started, "Auction has not started");
+    //require(block.timestamp < lands[_landaddress][_index].auctionEnd, "Auction has ended");
       IERC20Token(cUsdTokenAddress).transferFrom(
         msg.sender,
         address(this),
@@ -256,24 +260,68 @@ contract Seloworld {
     );
   }
 
+  function withdrawBid(address _landaddress, uint _index) external payable
+  minBidNotMade(_landaddress, _index) 
+  {
+    address highestBidder = lands[_landaddress][_index].highestBidder;
+    uint128 highestBid = lands[_landaddress][_index].highestBid;
+    if(highestBidder != address(0)){
+      require(IERC20Token(cUsdTokenAddress).transferFrom(
+        address(this),
+        msg.sender,
+        highestBid), "failed"
+      );
+      } else{
+        (bool sent, bytes memory data) = payable(msg.sender).call{value: highestBid, gas: 20000}("");
+        require(sent, "Could not withdraw");
+        }
+    
+    emit BidWithdrawn(
+      _landaddress,
+      _index,
+      msg.sender
+    );
+
+  }
+
+  function endAuction(address _landaddress, uint _index) external {
+    require(started, "You need to start first!");
+      require(block.timestamp >= lands[_landaddress][_index].auctionEnd, "Auction is still ongoing!");
+        require(!ended, "Auction already ended!");
+        address highestBidder = lands[_landaddress][_index].highestBidder;
+        uint128 highestBid = lands[_landaddress][_index].highestBid;
+        address owner = lands[_landaddress][_index].owner;
+        if(highestBidder != address(0)) {
+          require(IERC20Token(cUsdTokenAddress).transferFrom(
+          address(this),
+          owner,
+          highestBid), "failed"
+          );
+        } else {
+          (bool sent, bytes memory data) = payable(msg.sender).call{value: highestBid, gas: 20000}("");
+          require(sent, "Could not withdraw");
+        }
+
+        //to disburse funds to other bidders
+
+        ended = true;
+        emit AuctionEnd(
+          highestBidder,
+          highestBid
+        );
+
+  }
+
   function getLandsLength() public view returns (uint) {
     return (landsLength);
   }
 
   function getSalesMenLength() public view returns (uint){
+
     return (salesMenLength);
   }
   /*
     ENDAUCTIONFUNCTIONS
   */
-
-
-  /*
-    UPDATE BIDS
-  */
-
-
-
-
 
 }

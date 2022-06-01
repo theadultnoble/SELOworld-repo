@@ -62,7 +62,7 @@ const getLands = async function () {
         name: p[1],
         image: p[2],
         streetName: p[3],
-        price: new BigNumber(p[4]),
+        minPrice: new BigNumber(p[4]),
       });
     });
     _lands.push(_land);
@@ -112,10 +112,10 @@ function landTemplate(_land) {
         <h2 class="card-title fs-4 fw-bold mt-2">${_land.name}</h2>
         <h3 class="card-title fs-5 fw-bold mt-1">${_land.streetName}</h3>
         <div class="d-grid gap-2 ">
-          <a class="btn btn-lg btn-outline-dark buyBtn fs-6 p-3" id=${
+          <a class="btn btn-lg btn-outline-dark bidBtn fs-6 p-3" id=${
             _land.index
           }>
-            Start bid at ${_land.price
+            Start bid at ${_land.minPrice
               .shiftedBy(-ERC20_DECIMALS)
               .toFixed(2)} cUSD
           </a>
@@ -148,14 +148,15 @@ document
   .querySelector("#newProductBtn")
   .addEventListener("click", async (e) => {
     const params = [
+      document.getElementById("Address").value,
       document.getElementById("newProductName").value,
       document.getElementById("newImgUrl").value,
       document.getElementById("newStreetName").value,
-      new BigNumber(document.getElementById("newPrice").value)
+      new BigNumber(document.getElementById("minPrice").value)
         .shiftedBy(ERC20_DECIMALS)
         .toString(),
     ];
-    notification(`⌛ Adding "${params[0]}"...`);
+    notification(`⌛ Adding "${params[1]}"...`);
     try {
       const result = await contract.methods
         .writeLand(...params)
@@ -163,7 +164,7 @@ document
     } catch (error) {
       notification(`⚠️ ${error}.`);
     }
-    notification(`🎉 You successfully added "${params[0]}".`);
+    notification(`🎉 You successfully added "${params[1]}".`);
     getLands();
     notificationOff();
   });
@@ -182,20 +183,22 @@ document.querySelector("#applyList").addEventListener("click", async (e) => {
 });
 
 document.querySelector("#marketplace").addEventListener("click", async (e) => {
-  if (e.target.className.includes("buyBtn")) {
+  if (e.target.className.includes("bidBtn")) {
     const index = e.target.id;
     notification("⌛ Waiting for payment approval...");
     try {
-      await approve(lands[index].price);
+      await approve(lands[index].minPrice);
     } catch (error) {
       notification(`⚠️ ${error}.`);
     }
     notification(`⌛ Awaiting payment for "${lands[index].name}"...`);
     try {
       const result = await contract.methods
-        .buyLand(index)
+        .makeBid(index)
         .send({ from: kit.defaultAccount });
-      notification(`🎉 You successfully bought "${lands[index].name}".`);
+      notification(
+        `🎉 You successfully made a bid "${lands[landaddress][index].name}".`
+      );
       getLands();
       getBalance();
     } catch (error) {
