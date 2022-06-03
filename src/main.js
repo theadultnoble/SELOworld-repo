@@ -6,7 +6,7 @@ import seloWorldAbi from "../contract/seloWorld.abi.json";
 
 const ERC20_DECIMALS = 18;
 //crypto zombies changing contract logic
-const MPContractAddress = "0x2418cB6A884041E347a50297A753AdDcEd6E5662";
+const MPContractAddress = "";
 const cUSDContractAddress = "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1";
 
 let kit;
@@ -50,12 +50,12 @@ async function approve(_price) {
 }
 
 const getLands = async function () {
-  const _landsLength = await contract.methods.getLandsLength().call();
+  const _landsLength = await contract.methods.GetLandsLength().call();
   const _lands = [];
 
   for (let i = 0; i < _landsLength; i++) {
     let _land = new Promise(async (resolve, reject) => {
-      let p = await contract.methods.readLand(i).call();
+      let p = await contract.methods.ReadAuction(i).call();
       resolve({
         index: i,
         owner: p[0],
@@ -159,7 +159,7 @@ document
     notification(`⌛ Adding "${params[1]}"...`);
     try {
       const result = await contract.methods
-        .writeLand(...params)
+        .WriteAuction(...params)
         .send({ from: kit.defaultAccount });
     } catch (error) {
       notification(`⚠️ ${error}.`);
@@ -174,7 +174,7 @@ document.querySelector("#applyList").addEventListener("click", async (e) => {
   notification(`⌛ Adding "${params[0]}"...`);
   try {
     const result = await contract.methods
-      .giveRightToWriteLand(...params)
+      .GiveRightToAuction(...params)
       .send({ from: kit.defaultAccount });
   } catch (error) {
     notification(`⚠️ ${error}.`);
@@ -194,7 +194,7 @@ document.querySelector("#marketplace").addEventListener("click", async (e) => {
     notification(`⌛ Awaiting payment for "${lands[index].name}"...`);
     try {
       const result = await contract.methods
-        .makeBid(index)
+        .MakeBid(index)
         .send({ from: kit.defaultAccount });
       notification(
         `🎉 You successfully made a bid "${lands[landaddress][index].name}".`
