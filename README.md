@@ -65,7 +65,7 @@ Your project should be running here [http://localhost:3000/](http://localhost:30
 
 `ctrl + C`
 
-## 0Build
+## Build
 
 ---
 
