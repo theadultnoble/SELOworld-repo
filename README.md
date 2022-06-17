@@ -2,19 +2,14 @@
 
 ## About Dapp?
 
-Selo world is a real estate marketplace for trading buildings and landmarks in the metaverse 
+SELOworld is a real estate marketplace for trading real estate in the metaverse 
 
 Its features include:
 
-- Add your Celo wallet address and be allowed listing rights.
-- Auction your own real estate NFT
+- List your wallet address and be allowed minting rights.
+- Auction your own real estate NFT.
 - View other real estate put up for auction.
-- Place bids for real estate as NFTs using the Celo dollar cUSD.
-
-<aside>
-💡 NB : Auctions last 24hrs from listing in which the highest bid price wins
-
-</aside>
+- Place bids on auctions using the Celo dollar(cUSD).
 
 ## Requirements
 
@@ -25,14 +20,20 @@ Its features include:
 - Go to [https://celo.org/developers/faucet](https://celo.org/developers/faucet) and get tokens for the alfajores testnet.
 - Switch to the alfajores testnet in the CeloExtensionWallet.
 
-## Test SeloWorld
+## Test SELOworld
 
-- Connect your [CeloExtensionWallet](https://chrome.google.com/webstore/detail/celoextensionwallet/kkilomkmpmkbdnfelcpgckmpcaemjcdh?hl=en) using the connect wallet button
-- Use the List button to add your account address as a salesman(allows you to put up real estate for auction)
-- Add real estate with your opening bid price for interested buyers
-- Create a second [CeloExtensionWallet](https://chrome.google.com/webstore/detail/celoextensionwallet/kkilomkmpmkbdnfelcpgckmpcaemjcdh?hl=en) account to see the funds being transferred
-- Place bids on other real estate owned by salesmen
-- Switch to other account to see your balance increase
+- Connect your [CeloExtensionWallet](https://chrome.google.com/webstore/detail/celoextensionwallet/kkilomkmpmkbdnfelcpgckmpcaemjcdh?hl=en) using the connect wallet button.
+- Use the List Seller button to add your wallet address as a seller(gives right to mint real estate for auction).
+- Mint real estate with your opening bid price for interested buyers.
+- Create a second [CeloExtensionWallet](https://chrome.google.com/webstore/detail/celoextensionwallet/kkilomkmpmkbdnfelcpgckmpcaemjcdh?hl=en) account to see the funds being transferred.
+- Place bids on auction using the range form.
+- Switch between accounts to see your balance increase.
+- End your auction when you want to
+
+<aside>
+💡 You can’t place bids on your own auction with the same account
+
+</aside>
 
 ---
 
