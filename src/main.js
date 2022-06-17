@@ -5,8 +5,7 @@ import erc20Abi from "../contract/erc20.abi.json";
 import seloWorldAbi from "../contract/seloWorld.abi.json";
 
 const ERC20_DECIMALS = 18;
-//crypto zombies changing contract logic
-const MPContractAddress = "";
+const MPContractAddress = "0xfa2B0f065A83d01568bFcd32C97BaDfF345F624a";
 const cUSDContractAddress = "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1";
 
 let kit;
@@ -41,10 +40,10 @@ const getBalance = async function () {
   document.querySelector("#balance").textContent = cUSDBalance;
 };
 
-async function approve(_price) {
+async function approve(_bid) {
   const cUSDContract = new kit.web3.eth.Contract(erc20Abi, cUSDContractAddress);
   const result = await cUSDContract.methods
-    .approve(MPContractAddress, _price)
+    .approve(MPContractAddress, _bid)
     .send({ from: kit.defaultAccount });
   return result;
 }
@@ -61,8 +60,9 @@ const getLands = async function () {
         owner: p[0],
         name: p[1],
         image: p[2],
-        streetName: p[3],
-        minPrice: new BigNumber(p[4]),
+        minPrice: new BigNumber(p[3]),
+        highestBid: new BigNumber(p[4]),
+        highestBidder: p[5],
       });
     });
     _lands.push(_land);
@@ -103,22 +103,32 @@ function identiconTemplate(_address) {
 //Land Template
 function landTemplate(_land) {
   return `
-    <div class="card bg-secondary mb-3 text-dark">
+    <div class="card bg-secondary mb-2 text-dark">
       <img class="card-img-top" src="${_land.image}" alt="...">
       <div class="card-body text-left p-4 position-relative">
         <div class="translate-middle-y position-absolute top-0">
         ${identiconTemplate(_land.owner)}
         </div>
-        <h2 class="card-title fs-4 fw-bold mt-2">${_land.name}</h2>
-        <h3 class="card-title fs-5 fw-bold mt-1">${_land.streetName}</h3>
+        <div class="translate-middle-y position-relative top-0">
+        ${identiconTemplate(_land.highestBidder)}
+        </div> 
+        <h2 class="card-title fs-4 fw-bold mt-1">${_land.name}</h2>
+        <h3 class="card-title fs-6 fw-bold mt-1">Start Bid at ${_land.highestBid
+          .shiftedBy(-ERC20_DECIMALS)
+          .toFixed(2)} cUSD</h3>
         <div class="d-grid gap-2 ">
-          <a class="btn btn-lg btn-outline-dark bidBtn fs-6 p-3" id=${
+          <label for="bidRange" class="form-label">Choose bid range</label>
+          <input type="range" class="form-range" min="0" max="10" id="bidRange">
+          <button type="button" class="btn btn-outline-dark fw-bold bidBtn fs-6" id=${
             _land.index
           }>
-            Start bid at ${_land.minPrice
-              .shiftedBy(-ERC20_DECIMALS)
-              .toFixed(2)} cUSD
-          </a>
+            Bid
+          </button>
+          <button type="button" class="btn btn-outline-dark fw-bold endAuction fs-6" id=${
+            _land.index
+          }>
+            End Auction
+          </button>
         </div>
       </div>
     </div>
@@ -148,23 +158,21 @@ document
   .querySelector("#newProductBtn")
   .addEventListener("click", async (e) => {
     const params = [
-      document.getElementById("Address").value,
       document.getElementById("newProductName").value,
       document.getElementById("newImgUrl").value,
-      document.getElementById("newStreetName").value,
       new BigNumber(document.getElementById("minPrice").value)
         .shiftedBy(ERC20_DECIMALS)
         .toString(),
     ];
-    notification(`⌛ Adding "${params[1]}"...`);
+    notification(`⌛ Adding "${params[0]}"...`);
     try {
       const result = await contract.methods
-        .WriteAuction(...params)
+        .CreateAuction(...params)
         .send({ from: kit.defaultAccount });
     } catch (error) {
       notification(`⚠️ ${error}.`);
     }
-    notification(`🎉 You successfully added "${params[1]}".`);
+    notification(`🎉 You successfully added "${params[0]}".`);
     getLands();
     notificationOff();
   });
@@ -184,21 +192,24 @@ document.querySelector("#applyList").addEventListener("click", async (e) => {
 
 document.querySelector("#marketplace").addEventListener("click", async (e) => {
   if (e.target.className.includes("bidBtn")) {
+    const params = [
+      new BigNumber(document.getElementById("bidRange").value)
+        .shiftedBy(ERC20_DECIMALS)
+        .toString(),
+    ];
     const index = e.target.id;
     notification("⌛ Waiting for payment approval...");
     try {
-      await approve(lands[index].minPrice);
+      await approve(...params);
     } catch (error) {
       notification(`⚠️ ${error}.`);
     }
     notification(`⌛ Awaiting payment for "${lands[index].name}"...`);
     try {
       const result = await contract.methods
-        .MakeBid(index)
+        .MakeBid(index, ...params)
         .send({ from: kit.defaultAccount });
-      notification(
-        `🎉 You successfully made a bid "${lands[landaddress][index].name}".`
-      );
+      notification(`🎉 You successfully made a bid "${lands[index].name}".`);
       getLands();
       getBalance();
     } catch (error) {
@@ -207,4 +218,19 @@ document.querySelector("#marketplace").addEventListener("click", async (e) => {
   }
 });
 
-document.querySelector("").addEventListener("click", async (e) => {});
+document.querySelector("#marketplace").addEventListener("click", async (e) => {
+  if (e.target.className.includes("endAuction")) {
+    const index = e.target.id;
+    notification("⌛ please wait...");
+    try {
+      const result = await contract.methods
+        .EndAuction(index)
+        .send({ from: kit.defaultAccount });
+      notification(`🎉 You successfully ended "${lands[index].name}" auction.`);
+      getLands();
+      getBalance();
+    } catch (error) {
+      notification(`⚠️ ${error}.`);
+    }
+  }
+});

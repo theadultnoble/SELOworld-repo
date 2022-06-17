@@ -9,43 +9,6 @@
     "inputs": [
       {
         "indexed": false,
-        "internalType": "address payable",
-        "name": "owner",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "string",
-        "name": "name",
-        "type": "string"
-      },
-      {
-        "indexed": false,
-        "internalType": "string",
-        "name": "image",
-        "type": "string"
-      },
-      {
-        "indexed": false,
-        "internalType": "string",
-        "name": "streetName",
-        "type": "string"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint128",
-        "name": "minPrice",
-        "type": "uint128"
-      }
-    ],
-    "name": "AuctionCreated",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
         "internalType": "address",
         "name": "auctionSettler",
         "type": "address"
@@ -65,27 +28,21 @@
       },
       {
         "indexed": false,
-        "internalType": "uint128",
+        "internalType": "string",
+        "name": "name",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "image",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
         "name": "minPrice",
-        "type": "uint128"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint32",
-        "name": "bidIncreasePercentage",
-        "type": "uint32"
-      },
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "feeRecepient",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint32",
-        "name": "feePercentage",
-        "type": "uint32"
+        "type": "uint256"
       }
     ],
     "name": "AuctionStart",
@@ -111,23 +68,179 @@
     "type": "event"
   },
   {
-    "anonymous": false,
     "inputs": [
       {
-        "indexed": false,
+        "internalType": "string",
+        "name": "_name",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_image",
+        "type": "string"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_minPrice",
+        "type": "uint256"
+      }
+    ],
+    "name": "CreateAuction",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_index",
+        "type": "uint256"
+      }
+    ],
+    "name": "EndAuction",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "GetBalance",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "GetLandsLength",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "GetSalesMenLength",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "address",
-        "name": "highestBidder",
+        "name": "_salesman",
         "type": "address"
       }
     ],
-    "name": "BidWithdrawn",
-    "type": "event"
+    "name": "GiveRightToAuction",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
   },
   {
-    "anonymous": false,
-    "inputs": [],
-    "name": "HighestBidTaken",
-    "type": "event"
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_index",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "MakeBid",
+    "outputs": [],
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_index",
+        "type": "uint256"
+      }
+    ],
+    "name": "ReadAuction",
+    "outputs": [
+      {
+        "internalType": "address payable",
+        "name": "",
+        "type": "address"
+      },
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      },
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_index",
+        "type": "uint256"
+      }
+    ],
+    "name": "_getPortionOfBid",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
   },
   {
     "inputs": [],
@@ -140,24 +253,6 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "_landaddress",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_index",
-        "type": "uint256"
-      }
-    ],
-    "name": "endAuction",
-    "outputs": [],
-    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -188,25 +283,12 @@
   },
   {
     "inputs": [],
-    "name": "getLandsLength",
+    "name": "feeRecepient",
     "outputs": [
       {
-        "internalType": "uint256",
+        "internalType": "address payable",
         "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "getSalesMenLength",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
+        "type": "address"
       }
     ],
     "stateMutability": "view",
@@ -214,30 +296,6 @@
   },
   {
     "inputs": [
-      {
-        "internalType": "address",
-        "name": "_salesman",
-        "type": "address"
-      }
-    ],
-    "name": "giveRightToWriteLand",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      },
       {
         "internalType": "uint256",
         "name": "",
@@ -262,29 +320,19 @@
         "type": "string"
       },
       {
-        "internalType": "string",
-        "name": "streetName",
-        "type": "string"
-      },
-      {
-        "internalType": "uint128",
+        "internalType": "uint256",
         "name": "minPrice",
-        "type": "uint128"
-      },
-      {
-        "internalType": "uint128",
-        "name": "highestBid",
-        "type": "uint128"
-      },
-      {
-        "internalType": "address",
-        "name": "highestBidder",
-        "type": "address"
+        "type": "uint256"
       },
       {
         "internalType": "uint256",
-        "name": "auctionEnd",
+        "name": "highestBid",
         "type": "uint256"
+      },
+      {
+        "internalType": "address payable",
+        "name": "highestBidder",
+        "type": "address"
       }
     ],
     "stateMutability": "view",
@@ -298,73 +346,6 @@
         "internalType": "uint256",
         "name": "",
         "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "_landaddress",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_index",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint128",
-        "name": "_amount",
-        "type": "uint128"
-      }
-    ],
-    "name": "makeBid",
-    "outputs": [],
-    "stateMutability": "payable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "_landaddress",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_index",
-        "type": "uint256"
-      }
-    ],
-    "name": "readLand",
-    "outputs": [
-      {
-        "internalType": "address payable",
-        "name": "",
-        "type": "address"
-      },
-      {
-        "internalType": "string",
-        "name": "",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "",
-        "type": "string"
-      },
-      {
-        "internalType": "uint128",
-        "name": "",
-        "type": "uint128"
       }
     ],
     "stateMutability": "view",
@@ -403,54 +384,7 @@
     "type": "function"
   },
   {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "_landaddress",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_index",
-        "type": "uint256"
-      }
-    ],
-    "name": "withdrawBid",
-    "outputs": [],
     "stateMutability": "payable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address payable",
-        "name": "_owner",
-        "type": "address"
-      },
-      {
-        "internalType": "string",
-        "name": "_name",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "_image",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "_streetName",
-        "type": "string"
-      },
-      {
-        "internalType": "uint128",
-        "name": "_minPrice",
-        "type": "uint128"
-      }
-    ],
-    "name": "writeLand",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    "type": "receive"
   }
 ]

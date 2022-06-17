@@ -69,14 +69,7 @@
           data-bs-toggle="modal"
           data-bs-target="#applyModal"
         >
-          Apply
-        </button>
-        <button
-          type="button"
-          id="connectwallet"
-          class="btn btn-outline-secondary"
-        >
-          Connect Wallet
+          List
         </button>
         <span
           class="nav-link border border-secondary text-success rounded-pill"
@@ -84,6 +77,13 @@
           <span id="balance">0</span>
           cUSD
         </span>
+        <button
+          type="button"
+          id="connectwallet"
+          class="btn btn-outline-secondary"
+        >
+          Connect Wallet
+        </button>
       </div>
     </nav>
 
@@ -99,8 +99,9 @@
       <div class="container">
         <div class="fs-1 fw-bold">Gina Estate</div>
         <div>
-          The first surreal estate collection on Solana. Your own beautiful home
-          and a gallery for your NFTs.
+          The first surreal estate collection on Celo. Lorem ipsum dolor sit
+          amet consectetur adipisicing elit. Reiciendis quasi natus, vitae
+          repellat ipsam similique quo ad nesciunt minus.
         </div>
         <div class="mb-4" style="margin-top: 3em">
           <a
@@ -157,15 +158,7 @@
                   <div class="col">
                     <input
                       type="text"
-                      id="newStreetName"
-                      class="form-control mb-2"
-                      placeholder="Enter Streetname"
-                    />
-                  </div>
-                  <div class="col">
-                    <input
-                      type="text"
-                      id="newPrice"
+                      id="minPrice"
                       class="form-control mb-2"
                       placeholder="Enter price"
                     />
@@ -195,7 +188,7 @@
       </div>
       <!--/AddModal-->
 
-      <!--ApplyModal-->
+      <!--ListModal-->
       <div
         class="modal fade"
         id="applyModal"
@@ -207,7 +200,7 @@
           <div class="modal-content">
             <div class="modal-header">
               <h5 class="modal-title text-dark" id="newProductModalLabel">
-                Apply for addRight
+                List yourself
               </h5>
               <button
                 type="button"
@@ -219,14 +212,6 @@
             <div class="modal-body">
               <form>
                 <div class="form-row">
-                  <div class="col">
-                    <input
-                      type="text"
-                      id="newName"
-                      class="form-control mb-2"
-                      placeholder="Enter name"
-                    />
-                  </div>
                   <div class="col">
                     <input
                       type="text"
@@ -250,15 +235,15 @@
                 type="button"
                 class="btn btn-success"
                 data-bs-dismiss="modal"
-                id="newProductBtn"
+                id="applyList"
               >
-                Add product
+                List
               </button>
             </div>
           </div>
         </div>
       </div>
-      <!--/ApplyModal-->
+      <!--/ListModal-->
     </section>
 
     <!-- Option 1: Bootstrap Bundle with Popper -->

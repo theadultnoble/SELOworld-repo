@@ -26,42 +26,31 @@ contract Seloworld {
     // DEFAULT AUCTION VARs
     uint32 public bidIncreasePercentage;
     uint32 public feePercentage;
-    address feeRecepient = _Owner;
+    address payable public feeRecepient;
 
     bool public started;
-    bool public ended;
+    bool public ended ;
 
     struct Land {
         address payable owner;
         string name;
         string image;
-        string streetName;
         uint256 minPrice; 
         uint256 highestBid;
-        address highestBidder;
-        uint256 auctionEnd;
+        address payable highestBidder;
       }
 
-    mapping(address => mapping(uint256 => Land)) public lands; // MAP Land STRUCT TO AN UINT AND THEN TO AN ADDRESS IN lands ARRAY
+    mapping(uint256 => Land) public lands; // MAP Land STRUCT TO AN UINT IN lands ARRAY
     mapping (address => bool) public salesMen; 
     
     /*
       AUCTION EVENTS 
     */
-    event AuctionCreated(
-      address payable owner,
-      string name,
-      string image,
-      string streetName,
-      uint256 minPrice
-    );
-
     event AuctionStart(
       address owner,
-      uint256 minPrice,
-      uint32 bidIncreasePercentage,
-      address feeRecepient,
-      uint256 feePercentage
+      string name,
+      string image,
+      uint256 minPrice
     );
 
     event BidMade(
@@ -73,15 +62,10 @@ contract Seloworld {
     event AuctionEnd(
       address auctionSettler
     );
-
-    event BidWithdrawn(
-      address highestBidder
-    );
-
-    event HighestBidTaken();
     /*
       END AUCTION EVENTS
     */
+
     
     /*
       AUCTION MODIFIERS
@@ -94,46 +78,37 @@ contract Seloworld {
     }
     
     //REQUIRES AUCTION SELLER CANT BID ON OWN AUCTION
-    modifier notNftSeller(address _landaddress, uint256 _index) {
-      require(msg.sender != lands[_landaddress][_index].owner, "Owner cannot bid on own NFT");
+    modifier notNftSeller(uint256 _index) {
+      require(msg.sender != lands[_index].owner, "Owner cannot bid on own NFT");
       _;
     }
 
     //REQUIRES BID MADE MEETS ALL STANDARDS 
     modifier bidMeetsRequirements(
-      address _landaddress,
       uint _index,
       uint256 _amount
     ) {
       require(
         _doesBidMeetBidRquirements(
-          _landaddress,
           _index,
           _amount
         ), "Not enough to bid"
       );
       _;
     }
-    
-    //REQUIRES MINIMUM BID HAS NOT BEEN MADE
-    modifier minBidNotMade(
-      address _landaddress,
-      uint256 _index
-    ) {
-      require(!_isMinimumBidMade(_landaddress, _index), "Min bid made");
-      _;
-    }
-
     /*
       END AUCTION MODIFIERS
     */
+
+  
     
-    //CONSTRUCTOR CODE CALLED ONCE WHEN CONTRACT IS DEPLOYED
+    //CONSTRUCTOR CALLED ONCE WHEN CONTRACT IS DEPLOYED
 
     constructor() {
       _Owner = msg.sender; 
+      feeRecepient = payable(msg.sender);
       bidIncreasePercentage = 100;
-      feePercentage = 10;
+      feePercentage = 15;
       seed = uint (blockhash(block.number - 1)) % 100;
 
       salesMen[_Owner] = true; //GIVES _Owner PERMISSION TO WRITELAND
@@ -143,32 +118,27 @@ contract Seloworld {
       }
     }
 
+
     /*
       CHECK AUCTION FUNCTIONS
       N.B - CALLED IN AUCTION MODIFIERS
     */
     
-    function _isMinimumBidMade(address _landaddress,uint256 _index) internal view returns (bool) {
-      uint256 minPrice = lands[_landaddress][_index].minPrice;
-      return
-      minPrice > 0 && (lands[_landaddress][_index].highestBid >= minPrice);
-    }
-    
-    function _doesBidMeetBidRquirements(address _landaddress, uint256 _index, uint256 _amount)
+    function _doesBidMeetBidRquirements(uint256 _index, uint256 _amount)
     internal view returns (bool) {
-      uint256 bidIncreaseAmount = (lands[_landaddress][_index].highestBid *
+      uint256 bidIncreaseAmount = (lands[_index].highestBid *
       (10000 + bidIncreasePercentage)) / 10000;
       return (msg.value >= bidIncreaseAmount ||
       _amount >= bidIncreaseAmount);
     }
 
     // RETURNS THE CALCULATED FEE TO BE PAID 
-    function _getPortionOfBid(address _landaddress,uint256 _index)
-        internal
+    function _getPortionOfBid(uint256 _index)
+        public
         view
         returns (uint256)
     {
-      uint256 highestBid = lands[_landaddress][_index].highestBid;
+      uint256 highestBid = lands[_index].highestBid;
         return (highestBid * feePercentage) / 10000;
     }
 
@@ -192,13 +162,21 @@ contract Seloworld {
         }
       }
 
+    function _settleFeesandBids(
+      uint256 _index
+    ) internal{
+      uint256 fee = _getPortionOfBid(_index);
+      _payout(
+        feeRecepient,
+        fee
+      );
+  }
+
 
     /*
       AUCTION FUNCTIONS
     */
-
-    
-    //GIVE USER RIGHT TO ADD NEW AUCTIONS
+    // GIVE USER RIGHT TO ADD NEW AUCTIONS
     // SEED IMITATES AN ACCOUNT LISTING ASSESMENT FOR USERS  
     function GiveRightToAuction (
       address _salesman
@@ -211,138 +189,110 @@ contract Seloworld {
     }
 
     function CreateAuction(
-      address payable _owner,
       string memory _name,
       string memory _image,
-      string memory _streetName,
       uint256 _minPrice
-    ) public  {
+    ) public  
+    priceGreaterThanZero(
+      _minPrice
+    )
+    {
       bool sender = salesMen[msg.sender];
       require(sender != false, "has no right");
-      lands[_owner][landsLength].owner = _owner;
-      lands[_owner][landsLength].name = _name;
-      lands[_owner][landsLength].image= _image;
-      lands[_owner][landsLength].streetName = _streetName;
-      lands[_owner][landsLength].minPrice = _minPrice;
+      lands[landsLength].owner = payable(msg.sender);
+      lands[landsLength].name = _name;
+      lands[landsLength].image= _image;
+      lands[landsLength].minPrice = _minPrice;
       
       landsLength++;
       started = true;
-      lands[_owner][landsLength].auctionEnd = block.timestamp + 1 days;
+      ended = false;
       
-      emit AuctionCreated(
-       _owner,
+      emit AuctionStart(
+       msg.sender,
        _name,
        _image,
-       _streetName,
        _minPrice
       );
     }
 
-  function MakeBid(address _landaddress, uint256 _index, uint256 _amount) external payable
-  /*bidMeetsRequirements(
-    _landaddress,
+  function MakeBid(uint256 _index, uint256 _amount) external payable
+   bidMeetsRequirements(
     _index,
     _amount
   ) 
-  minBidNotMade(
-    _landaddress,
-    _index
-  ) 
-  notNftSeller(
-   _landaddress, 
+  notNftSeller( 
    _index
-  )*/{
-    /*require(started, "Auction has not started");
-    require(block.timestamp < lands[_landaddress][_index].auctionEnd, "Auction has ended");*/
+  ){
+    require(started, "Auction has not started");
+    require(!ended, "Auction has ended!");
       require(IERC20Token(cUsdTokenAddress).transferFrom(
         msg.sender,
         address(this),
         _amount
       ), "Transfer failed");
-    lands[_landaddress][_index].highestBid = _amount;
-    lands[_landaddress][_index].highestBidder = msg.sender;
-    /*
+      
+    lands[_index].highestBid = _amount;
+    lands[_index].highestBidder = payable(msg.sender);
+
     emit BidMade(
       msg.sender,
       msg.value
-    );*/
-  }
-  
-  function WithdrawBid(address _landaddress, uint256 _index) external payable
-  minBidNotMade(_landaddress, _index) 
-  {
-    address highestBidder = lands[_landaddress][_index].highestBidder;
-    uint256 highestBid = lands[_landaddress][_index].highestBid;
-    if(highestBidder != address(0)){
-      require(IERC20Token(cUsdTokenAddress).transferFrom(
-        address(this),
-        msg.sender,
-        highestBid), "failed"
-      );
-      } else{
-        (bool sent, ) = payable(msg.sender).call{value: highestBid, gas: 20000}("");
-        require(sent, "Could not withdraw");
-        }
-    
-    emit BidWithdrawn(
-      msg.sender
     );
+  
   }
 
-  function SettleFeesandBids (
-    address _landaddress, 
-    uint256 _index
-    ) internal {
-      uint256 fee = _getPortionOfBid(_landaddress, _index);
-      _payout(
-        feeRecepient,
-        fee
-      );
-  }
+  receive() external payable{}
 
-  function EndAuction(address _landaddress, uint256 _index) external {
+  function GetBalance() public view returns(uint) {
+     return address(this).balance;
+  } 
+  
+  function EndAuction(uint256 _index) external {
     require(started, "You need to start first!");
-      require(block.timestamp >= lands[_landaddress][_index].auctionEnd, "Auction is still ongoing!");
-        require(!ended, "Auction already ended!");
-        address highestBidder = lands[_landaddress][_index].highestBidder;
-        uint256 highestBid = lands[_landaddress][_index].highestBid;
-        address owner = lands[_landaddress][_index].owner;
-      
-        if(highestBidder != address(0)) {
-          require(IERC20Token(cUsdTokenAddress).transferFrom(
-          address(this),
-          owner,
-          highestBid), "failed"
-          );
+    require(!ended, "Auction already ended!");
+    require(msg.sender == lands[_index].owner, "not owner of auction");
+    address highestBidder = lands[_index].highestBidder;
+    uint256 highestBid = lands[_index].highestBid;
+    address owner = lands[_index].owner;
+    uint256 fee = _getPortionOfBid(_index);
+    uint256 winningBid = highestBid - fee;
+    if(highestBidder != address(0)) {
+        _payout(
+        owner,
+        winningBid
+        );
         } else {
-          (bool sent,) = payable(owner).call{value: highestBid, gas: 20000}("");
+          (bool sent,) = payable(owner).call{value: winningBid, gas: 20000}("");
           require(sent, "Could not withdraw");
         }
 
-        SettleFeesandBids(_landaddress,_index);
-
-        //to disburse funds to other bidders
+        _settleFeesandBids(_index);
 
         ended = true;
+        started = false;
+
         emit AuctionEnd(
           highestBidder
         );
 
   }
 
-  function ReadAuction(address _landaddress,uint256 _index) public view returns (
+  function ReadAuction(uint256 _index) public view returns (
     address payable,
     string memory,
     string memory,
-    string memory,
-    uint256
+    uint256,
+    uint256,
+    address
   ) {
     return (
-      lands[_landaddress][_index].owner,
-      lands[_landaddress][_index].name,
-      lands[_landaddress][_index].image, 
-      lands[_landaddress][_index].streetName,
-      lands[_landaddress][_index].minPrice
+      lands[_index].owner,
+      lands[_index].name,
+      lands[_index].image, 
+      lands[_index].minPrice,
+      lands[_index].highestBid,
+      lands[_index].highestBidder
     );
   }
 
