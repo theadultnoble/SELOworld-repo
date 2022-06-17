@@ -1,4 +1,4 @@
-# SeloWorld readme.md
+# SELOworld readme.md
 
 ## About Dapp?
 
