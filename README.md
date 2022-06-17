@@ -6,9 +6,9 @@ SELOworld is a real estate marketplace for trading real estate in the metaverse
 
 Its features include:
 
-- List wallet address and receive minting rights.
-- Auction real estate NFT.
-- View real estate put up for auction.
+- List your wallet address and be allowed minting rights.
+- Auction your own real estate NFT.
+- View other real estate put up for auction.
 - Place bids on auctions using the Celo dollar(cUSD).
 
 ## Requirements
@@ -22,16 +22,16 @@ Its features include:
 
 ## Test SELOworld
 
-- Connect [CeloExtensionWallet](https://chrome.google.com/webstore/detail/celoextensionwallet/kkilomkmpmkbdnfelcpgckmpcaemjcdh?hl=en) using the connect wallet button.
-- Use the List Seller button to add wallet address as a seller(gives right to auction).
-- Mint real estate for auction with opening bid price.
-- Create a second [CeloExtensionWallet](https://chrome.google.com/webstore/detail/celoextensionwallet/kkilomkmpmkbdnfelcpgckmpcaemjcdh?hl=en) account.
-- Place bids on auction using the range input.
-- Switch between accounts to see cUSD balance change.
-- End auction.
+- Connect your [CeloExtensionWallet](https://chrome.google.com/webstore/detail/celoextensionwallet/kkilomkmpmkbdnfelcpgckmpcaemjcdh?hl=en) using the connect wallet button.
+- Use the List Seller button to add your wallet address as a seller(gives right to mint real estate for auction).
+- Mint real estate with your opening bid price for interested buyers.
+- Create a second [CeloExtensionWallet](https://chrome.google.com/webstore/detail/celoextensionwallet/kkilomkmpmkbdnfelcpgckmpcaemjcdh?hl=en) account to see the funds being transferred.
+- Place bids on auction using the range form.
+- Switch between accounts to see your balance increase.
+- End your auction when you want to
 
 <aside>
-💡 Owner can’t place bids on own auction with the same account.
+💡 You can’t place bids on your own auction with the same account
 
 </aside>
 
@@ -57,7 +57,7 @@ or
 
 Start a local development server.
 
-Project should be running here [http://localhost:3000/](http://localhost:3000/).
+Your project should be running here [http://localhost:3000/](http://localhost:3000/).
 
 ## Stop Dapp
 
@@ -77,4 +77,4 @@ Builds the app for production to the `docs` folder.
 
 ---
 
-## [https://theadultnoble.github.io/MyCelo-web-Dapp/](https://theadultnoble.github.io/MyCelo-web-Dapp/)
+## [https://theadultnoble.github.io/SELOworld-repo/](https://theadultnoble.github.io/SELOworld-repo/)
