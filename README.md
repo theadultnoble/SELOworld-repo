@@ -1,4 +1,4 @@
-# SeloWorld readme.md
+# SELOworld readme.md
 
 ## About Dapp?
 
@@ -65,7 +65,7 @@ Your project should be running here [http://localhost:3000/](http://localhost:30
 
 `ctrl + C`
 
-## 0Build
+## Build
 
 ---
 
@@ -77,4 +77,4 @@ Builds the app for production to the `docs` folder.
 
 ---
 
-## [https://theadultnoble.github.io/MyCelo-web-Dapp/](https://theadultnoble.github.io/MyCelo-web-Dapp/)
+## [https://theadultnoble.github.io/SELOworld-repo/](https://theadultnoble.github.io/SELOworld-repo/)
