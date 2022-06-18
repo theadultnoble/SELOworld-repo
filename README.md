@@ -2,12 +2,12 @@
 
 ## About Dapp?
 
-SELOworld is a real estate marketplace for trading real estate in the metaverse 
+SELOworld is a marketplace for trading real estate in the metaverse 
 
 Its features include:
 
-- List your wallet address and be allowed minting rights.
-- Auction your own real estate NFT.
+- List wallet address and be allowed minting rights.
+- Auction real estate NFT.
 - View other real estate put up for auction.
 - Place bids on auctions using the Celo dollar(cUSD).
 
