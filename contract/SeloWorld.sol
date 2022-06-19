@@ -30,21 +30,22 @@ contract Seloworld {
 
     bool public started;
     bool public ended ;
+    bool public paused;
 
     struct Land {
         address payable owner;
         string name;
         string image;
-        uint256 minPrice; 
+        uint256 minPrice;
         uint256 highestBid;
         address payable highestBidder;
       }
 
     mapping(uint256 => Land) public lands; // MAP Land STRUCT TO AN UINT IN lands ARRAY
-    mapping (address => bool) public salesMen; 
-    
+    mapping (address => bool) public salesMen;
+
     /*
-      AUCTION EVENTS 
+      AUCTION EVENTS
     */
     event AuctionStart(
       address owner,
@@ -66,24 +67,24 @@ contract Seloworld {
       END AUCTION EVENTS
     */
 
-    
+
     /*
       AUCTION MODIFIERS
     */
-    
+
     //REQUIRES MINIMUM PRICE SET FOR AUCTION IS GREATER THAN ZERO
     modifier priceGreaterThanZero(uint256 _minPrice) {
       require(_minPrice > 0, "Price cannot be 0");
       _;
     }
-    
+
     //REQUIRES AUCTION SELLER CANT BID ON OWN AUCTION
     modifier notNftSeller(uint256 _index) {
       require(msg.sender != lands[_index].owner, "Owner cannot bid on own NFT");
       _;
     }
 
-    //REQUIRES BID MADE MEETS ALL STANDARDS 
+    //REQUIRES BID MADE MEETS ALL STANDARDS
     modifier bidMeetsRequirements(
       uint _index,
       uint256 _amount
@@ -96,16 +97,21 @@ contract Seloworld {
       );
       _;
     }
+
+    modifier notPaused() {
+      require(paused== false, "Auction is paused");
+      _;
+    }
     /*
       END AUCTION MODIFIERS
     */
 
-  
-    
+
+
     //CONSTRUCTOR CALLED ONCE WHEN CONTRACT IS DEPLOYED
 
     constructor() {
-      _Owner = msg.sender; 
+      _Owner = msg.sender;
       feeRecepient = payable(msg.sender);
       bidIncreasePercentage = 100;
       feePercentage = 15;
@@ -123,7 +129,7 @@ contract Seloworld {
       CHECK AUCTION FUNCTIONS
       N.B - CALLED IN AUCTION MODIFIERS
     */
-    
+
     function _doesBidMeetBidRquirements(uint256 _index, uint256 _amount)
     internal view returns (bool) {
       uint256 bidIncreaseAmount = (lands[_index].highestBid *
@@ -132,7 +138,7 @@ contract Seloworld {
       _amount >= bidIncreaseAmount);
     }
 
-    // RETURNS THE CALCULATED FEE TO BE PAID 
+    // RETURNS THE CALCULATED FEE TO BE PAID
     function _getPortionOfBid(uint256 _index)
         public
         view
@@ -145,7 +151,7 @@ contract Seloworld {
     /*
       END AUCTION CHECK FUNCTIONS
     */
-    
+
     //HANDLE AUCTION PAYMENTS
     function _payout(
       address _recepient,
@@ -177,7 +183,7 @@ contract Seloworld {
       AUCTION FUNCTIONS
     */
     // GIVE USER RIGHT TO ADD NEW AUCTIONS
-    // SEED IMITATES AN ACCOUNT LISTING ASSESMENT FOR USERS  
+    // SEED IMITATES AN ACCOUNT LISTING ASSESMENT FOR USERS
     function GiveRightToAuction (
       address _salesman
     ) external returns (bool) {
@@ -192,7 +198,7 @@ contract Seloworld {
       string memory _name,
       string memory _image,
       uint256 _minPrice
-    ) public  
+    ) public
     priceGreaterThanZero(
       _minPrice
     )
@@ -203,11 +209,11 @@ contract Seloworld {
       lands[landsLength].name = _name;
       lands[landsLength].image= _image;
       lands[landsLength].minPrice = _minPrice;
-      
+
       landsLength++;
       started = true;
       ended = false;
-      
+
       emit AuctionStart(
        msg.sender,
        _name,
@@ -220,8 +226,8 @@ contract Seloworld {
    bidMeetsRequirements(
     _index,
     _amount
-  ) 
-  notNftSeller( 
+  )
+  notNftSeller(
    _index
   ){
     require(started, "Auction has not started");
@@ -231,7 +237,7 @@ contract Seloworld {
         address(this),
         _amount
       ), "Transfer failed");
-      
+
     lands[_index].highestBid = _amount;
     lands[_index].highestBidder = payable(msg.sender);
 
@@ -239,16 +245,16 @@ contract Seloworld {
       msg.sender,
       msg.value
     );
-  
+
   }
 
   receive() external payable{}
 
   function GetBalance() public view returns(uint) {
      return address(this).balance;
-  } 
-  
-  function EndAuction(uint256 _index) external {
+  }
+
+  function EndAuction(uint256 _index) notPaused external {
     require(started, "You need to start first!");
     require(!ended, "Auction already ended!");
     require(msg.sender == lands[_index].owner, "not owner of auction");
@@ -289,7 +295,7 @@ contract Seloworld {
     return (
       lands[_index].owner,
       lands[_index].name,
-      lands[_index].image, 
+      lands[_index].image,
       lands[_index].minPrice,
       lands[_index].highestBid,
       lands[_index].highestBidder
@@ -304,6 +310,22 @@ contract Seloworld {
 
     return (salesMenLength);
   }
+
+
+    /*
+  Pause an action
+*/
+    function pauseAuction() public {
+      require(msg.sender == _Owner, "Only owner can pause");
+      paused = true;
+    }
+
+
+    function resumeAuction() public {
+        require(msg.sender == _Owner, "Only owner can resume");
+        paused = false;
+    }
+
 
   /*
     END AUCTION FUNCTIONS
