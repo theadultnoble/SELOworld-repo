@@ -5,7 +5,7 @@ import erc20Abi from "../contract/erc20.abi.json";
 import seloWorldAbi from "../contract/SeloWorld.abi.json";
 
 const ERC20_DECIMALS = 18;
-const MPContractAddress = "0xfa2B0f065A83d01568bFcd32C97BaDfF345F624a";
+const MPContractAddress = "0x2aC6Dc9949B506f501fc1165D11B35439E999Eb6";
 const cUSDContractAddress = "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1";
 
 let kit;
