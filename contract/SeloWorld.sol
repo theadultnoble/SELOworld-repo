@@ -28,8 +28,8 @@ contract Seloworld {
     uint32 public feePercentage;
     address payable public feeRecepient;
 
-    bool public started;
-    bool public ended ;
+    mapping(uint => bool) public started;
+    mapping(uint => bool) public ended;
 
     struct Land {
         address payable owner;
@@ -204,10 +204,10 @@ contract Seloworld {
       lands[landsLength].image= _image;
       lands[landsLength].minPrice = _minPrice;
       
-      landsLength++;
-      started = true;
-      ended = false;
+      started[landsLength] = true;
+      ended[landsLength] = false;
       
+      landsLength++;
       emit AuctionStart(
        msg.sender,
        _name,
@@ -224,8 +224,8 @@ contract Seloworld {
   notNftSeller( 
    _index
   ){
-    require(started, "Auction has not started");
-    require(!ended, "Auction has ended!");
+    require(started[_index], "Auction has not started");
+    require(!ended[_index], "Auction has ended!");
       require(IERC20Token(cUsdTokenAddress).transferFrom(
         msg.sender,
         address(this),
@@ -249,8 +249,8 @@ contract Seloworld {
   } 
   
   function EndAuction(uint256 _index) external {
-    require(started, "You need to start first!");
-    require(!ended, "Auction already ended!");
+    require(started[_index], "You need to start first!");
+    require(!ended[_index], "Auction already ended!");
     require(msg.sender == lands[_index].owner, "not owner of auction");
     address highestBidder = lands[_index].highestBidder;
     uint256 highestBid = lands[_index].highestBid;
@@ -269,8 +269,8 @@ contract Seloworld {
 
         _settleFeesandBids(_index);
 
-        ended = true;
-        started = false;
+        ended[_index] = true;
+        started[_index] = false;
 
         emit AuctionEnd(
           highestBidder

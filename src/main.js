@@ -2,10 +2,10 @@ import Web3 from "web3";
 import { newKitFromWeb3 } from "@celo/contractkit";
 import BigNumber from "bignumber.js";
 import erc20Abi from "../contract/erc20.abi.json";
-import seloWorldAbi from "../contract/seloWorld.abi.json";
+import seloWorldAbi from "../contract/SeloWorld.abi.json";
 
 const ERC20_DECIMALS = 18;
-const MPContractAddress = "0x2aC6Dc9949B506f501fc1165D11B35439E999Eb6";
+const MPContractAddress = "0x26865c8FCDFf5fCc0a31eDE881ECac1C341b3Ed6";
 const cUSDContractAddress = "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1";
 
 let kit;
@@ -102,6 +102,12 @@ function identiconTemplate(_address) {
 
 //Land Template
 function landTemplate(_land) {
+  const endAuctionBtn = `<button type="button" class="btn btn-outline-dark fw-bold endAuction fs-6" id=${_land.index}>
+                        End Auction
+                        </button>`;
+  const bidBtn = `<button type="button" class="btn btn-outline-dark fw-bold bidBtn fs-6" id=${_land.index}>
+    Bid
+  </button>`;
   return `
     <div class="card bg-secondary mb-2 text-dark">
       <img class="card-img-top" src="${_land.image}" alt="...">
@@ -119,16 +125,8 @@ function landTemplate(_land) {
         <div class="d-grid gap-2 ">
           <label for="bidRange" class="form-label">Choose bid range</label>
           <input type="range" class="form-range" min="0" max="10" id="bidRange">
-          <button type="button" class="btn btn-outline-dark fw-bold bidBtn fs-6" id=${
-            _land.index
-          }>
-            Bid
-          </button>
-          <button type="button" class="btn btn-outline-dark fw-bold endAuction fs-6" id=${
-            _land.index
-          }>
-            End Auction
-          </button>
+          ${_land.owner != kit.defaultAccount ? bidBtn : ""}
+          ${_land.owner == kit.defaultAccount ? endAuctionBtn : ""}
         </div>
       </div>
     </div>
@@ -142,6 +140,9 @@ document
     await connectCeloWallet();
     await getBalance();
     await getLands();
+    if (kit && contract) {
+      document.querySelector("#connectwallet").classList.add("disabled");
+    }
     notificationOff();
   });
 
@@ -157,6 +158,10 @@ function notificationOff() {
 document
   .querySelector("#newProductBtn")
   .addEventListener("click", async (e) => {
+    if (!contract && !kit) {
+      notification("Please connect wallet first to be able to mint land");
+      return;
+    }
     const params = [
       document.getElementById("newProductName").value,
       document.getElementById("newImgUrl").value,
@@ -178,16 +183,24 @@ document
   });
 
 document.querySelector("#applyList").addEventListener("click", async (e) => {
-  const params = [document.getElementById("newAddress").value];
-  notification(`⌛ Adding "${params[0]}"...`);
+  let param = document.getElementById("newAddress").value;
+  if (!contract && !kit) {
+    notification("Please connect wallet first to be to add a seller");
+    return;
+  }
+  if (!Web3.utils.isAddress(param)) {
+    notification("Please enter a valid wallet address");
+    return;
+  }
+  notification(`⌛ Adding "${param}"...`);
   try {
     const result = await contract.methods
-      .GiveRightToAuction(...params)
+      .GiveRightToAuction(param)
       .send({ from: kit.defaultAccount });
+    notification(`🎉 You successfully Listed`);
   } catch (error) {
     notification(`⚠️ ${error}.`);
   }
-  notification(`🎉 You successfully Listed`);
 });
 
 document.querySelector("#marketplace").addEventListener("click", async (e) => {
@@ -219,8 +232,11 @@ document.querySelector("#marketplace").addEventListener("click", async (e) => {
 });
 
 document.querySelector("#marketplace").addEventListener("click", async (e) => {
-  if (e.target.className.includes("endAuction")) {
-    const index = e.target.id;
+  const index = e.target.id;
+  if (
+    e.target.className.includes("endAuction") &&
+    kit.defaultAccount == lands[index].owner
+  ) {
     notification("⌛ please wait...");
     try {
       const result = await contract.methods
