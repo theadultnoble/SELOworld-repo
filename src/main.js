@@ -205,22 +205,20 @@ document.querySelector("#applyList").addEventListener("click", async (e) => {
 
 document.querySelector("#marketplace").addEventListener("click", async (e) => {
   if (e.target.className.includes("bidBtn")) {
-    const params = [
-      new BigNumber(document.getElementById("bidRange").value)
-        .shiftedBy(ERC20_DECIMALS)
-        .toString(),
-    ];
+    let param = new BigNumber(document.getElementById("bidRange").value)
+      .shiftedBy(ERC20_DECIMALS)
+      .toString();
     const index = e.target.id;
     notification("⌛ Waiting for payment approval...");
     try {
-      await approve(...params);
+      await approve(param);
     } catch (error) {
       notification(`⚠️ ${error}.`);
     }
     notification(`⌛ Awaiting payment for "${lands[index].name}"...`);
     try {
       const result = await contract.methods
-        .MakeBid(index, ...params)
+        .MakeBid(index, param)
         .send({ from: kit.defaultAccount });
       notification(`🎉 You successfully made a bid "${lands[index].name}".`);
       getLands();
