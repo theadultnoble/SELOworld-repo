@@ -121,13 +121,16 @@ function landTemplate(_land) {
         <h2 class="card-title fs-4 fw-bold mt-1">${_land.name}</h2>
         <h3 class="card-title fs-6 fw-bold mt-1">Start Bid at ${_land.highestBid
           .shiftedBy(-ERC20_DECIMALS)
-          .toFixed(2)} cUSD</h3>
-        <div class="d-grid gap-2 ">
+          .toFixed(2)} cUSD
+        </h3>
           <label for="bidRange" class="form-label">Choose bid range</label>
-          <input type="range" class="form-range" min="0" max="10" id="bidRange">
-          ${_land.owner != kit.defaultAccount ? bidBtn : ""}
-          ${_land.owner == kit.defaultAccount ? endAuctionBtn : ""}
-        </div>
+          <div class="input-group mb-3">
+            <span class="input-group-text">cUSD</span>
+            <input type="text" class="form-control" id="bidAmount">
+            <span class="input-group-text">.00</span>
+            ${_land.owner != kit.defaultAccount ? bidBtn : ""}
+            ${_land.owner == kit.defaultAccount ? endAuctionBtn : ""}
+          </div>
       </div>
     </div>
   `;
@@ -205,7 +208,7 @@ document.querySelector("#applyList").addEventListener("click", async (e) => {
 
 document.querySelector("#marketplace").addEventListener("click", async (e) => {
   if (e.target.className.includes("bidBtn")) {
-    let param = new BigNumber(document.getElementById("bidRange").value)
+    let param = new BigNumber(document.getElementById("bidAmount").value)
       .shiftedBy(ERC20_DECIMALS)
       .toString();
     const index = e.target.id;
