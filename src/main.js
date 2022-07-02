@@ -123,10 +123,10 @@ function landTemplate(_land) {
           .shiftedBy(-ERC20_DECIMALS)
           .toFixed(2)} cUSD
         </h3>
-          <label for="bidRange" class="form-label">Choose bid range</label>
+          <label class="form-label">Enter bid value</label>
           <div class="input-group mb-3">
             <span class="input-group-text">cUSD</span>
-            <input type="text" class="form-control" id="bidAmount">
+            <input type="text" class="form-control" id="bidAmount-${_land.index}">
             <span class="input-group-text">.00</span>
             ${_land.owner != kit.defaultAccount ? bidBtn : ""}
             ${_land.owner == kit.defaultAccount ? endAuctionBtn : ""}
@@ -208,10 +208,10 @@ document.querySelector("#applyList").addEventListener("click", async (e) => {
 
 document.querySelector("#marketplace").addEventListener("click", async (e) => {
   if (e.target.className.includes("bidBtn")) {
-    let param = new BigNumber(document.getElementById("bidAmount").value)
+    const index = e.target.id;
+    let param = new BigNumber(document.getElementById(`bidAmount-${index}`).value)
       .shiftedBy(ERC20_DECIMALS)
       .toString();
-    const index = e.target.id;
     notification("⌛ Waiting for payment approval...");
     try {
       await approve(param);
