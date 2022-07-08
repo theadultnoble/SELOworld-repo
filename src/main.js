@@ -55,8 +55,10 @@ const getLands = async function () {
   for (let i = 0; i < _landsLength; i++) {
     let _land = new Promise(async (resolve, reject) => {
       let p = await contract.methods.ReadAuction(i).call();
+      let started = await contract.methods.started(i).call();
       resolve({
         index: i,
+        started,
         owner: p[0],
         name: p[1],
         image: p[2],
@@ -103,14 +105,22 @@ function identiconTemplate(_address) {
 //Land Template
 function landTemplate(_land) {
   const endAuctionBtn = `<button type="button" class="btn btn-outline-dark fw-bold endAuction fs-6" id=${_land.index}>
-                        End Auction
+                          End Auction
                         </button>`;
   const bidBtn = `<button type="button" class="btn btn-outline-dark fw-bold bidBtn fs-6" id=${_land.index}>
-    Bid
-  </button>`;
+                    Bid
+                  </button>`;
+  const started = `<div class="position-absolute top-0 end-0 bg-warning mt-4 px-2 py-1 rounded-start">
+                    started
+                  </div>`;
+  const ended = `<div class="position-absolute top-0 end-0 bg-warning mt-4 px-2 py-1 rounded-start">
+                    ended
+                  </div>`;
   return `
     <div class="card bg-secondary mb-2 text-dark">
       <img class="card-img-top" src="${_land.image}" alt="...">
+      ${_land.started != true ? ended : ""}
+      ${_land.started == true ? started : ""}
       <div class="card-body text-left p-4 position-relative">
         <div class="translate-middle-y position-absolute top-0">
         ${identiconTemplate(_land.owner)}
@@ -119,14 +129,16 @@ function landTemplate(_land) {
         ${identiconTemplate(_land.highestBidder)}
         </div> 
         <h2 class="card-title fs-4 fw-bold mt-1">${_land.name}</h2>
-        <h3 class="card-title fs-6 fw-bold mt-1">Start Bid at ${_land.highestBid
+        <h3 class="card-title fs-6 fw-bold mt-1">Bid higher than ${_land.highestBid
           .shiftedBy(-ERC20_DECIMALS)
           .toFixed(2)} cUSD
         </h3>
           <label class="form-label">Enter bid value</label>
           <div class="input-group mb-3">
             <span class="input-group-text">cUSD</span>
-            <input type="text" class="form-control" id="bidAmount-${_land.index}">
+            <input type="text" class="form-control" id="bidAmount-${
+              _land.index
+            }">
             <span class="input-group-text">.00</span>
             ${_land.owner != kit.defaultAccount ? bidBtn : ""}
             ${_land.owner == kit.defaultAccount ? endAuctionBtn : ""}
@@ -209,7 +221,9 @@ document.querySelector("#applyList").addEventListener("click", async (e) => {
 document.querySelector("#marketplace").addEventListener("click", async (e) => {
   if (e.target.className.includes("bidBtn")) {
     const index = e.target.id;
-    let param = new BigNumber(document.getElementById(`bidAmount-${index}`).value)
+    let param = new BigNumber(
+      document.getElementById(`bidAmount-${index}`).value
+    )
       .shiftedBy(ERC20_DECIMALS)
       .toString();
     notification("⌛ Waiting for payment approval...");
